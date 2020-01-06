@@ -1,4 +1,4 @@
-import { createTrackingSnippet } from '../src/utils'
+import { createTrackingSnippet, isExcludedHostname } from '../src/utils'
 
 test('setting the tracking URL', () => {
   const html = createTrackingSnippet({
@@ -40,5 +40,30 @@ describe('setting the site ID', () => {
     })
 
     expect(html).toContain("fathom('set', 'siteId', 'foo-bar')")
+  })
+})
+
+describe('testing against excluded hostnames', () => {
+  const excludedHostnames = ['localhost', 'netlify.com']
+
+  test('when hostname is in excluded hostnames', () => {
+    const isExcluded = isExcludedHostname(excludedHostnames, 'localhost')
+
+    expect(isExcluded).toBe(true)
+  })
+
+  test('when hostname is not in excluded hostnames', () => {
+    const isExcluded = isExcludedHostname(excludedHostnames, 'localghost')
+
+    expect(isExcluded).toBe(false)
+  })
+
+  test('when hostname contains subdomain and is in excluded hostnames', () => {
+    const isExcluded = isExcludedHostname(
+      excludedHostnames,
+      '5e134a681339000ddc5e6c--nostalgic-ritchie-f3f90f.netlify.com'
+    )
+
+    expect(isExcluded).toBe(true)
   })
 })

@@ -23,3 +23,25 @@ exports.createTrackingSnippet = function createTrackingSnippet({
     ${siteId && "fathom('set', 'siteId', '" + siteId + "');"}
   `
 }
+
+exports.isExcludedHostname = function isExcludedHostname(
+  excludedHostnames = [],
+  currentHostname
+) {
+  let exclude = false
+
+  excludedHostnames.forEach(hostname => {
+    if (exclude) {
+      return
+    }
+
+    const regex = RegExp(hostname)
+
+    if (regex.test(currentHostname)) {
+      exclude = true
+      return
+    }
+  })
+
+  return exclude
+}
